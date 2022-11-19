@@ -1,4 +1,4 @@
-package com.yixihan;
+package com.yixihan.day1116;
 
 public class Variable<T> {
     //should we use another two class extends from Variable to represent INT and BOOL?

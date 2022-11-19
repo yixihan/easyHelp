@@ -1,10 +1,6 @@
-package com.yixihan;
+package com.yixihan.day1116;
 
 
-import com.yixihan.simpleBool;
-import com.yixihan.simpleInt;
-
-import javax.swing.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -1,4 +1,4 @@
-package com.yixihan;
+package com.yixihan.day1116;
 
 public class Simple {
     private String label;

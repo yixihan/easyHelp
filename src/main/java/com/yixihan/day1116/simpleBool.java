@@ -1,15 +1,15 @@
-package com.yixihan;
+package com.yixihan.day1116;
 
-public class simpleInt {
-    private int value;
+public class simpleBool {
+    private boolean value;
     private String name;
 
-    public simpleInt(int value, String name){
+    public simpleBool(boolean value, String name){
         this.value = value;
         this.name = name;
     }
 
-    public int getValue(){
+    public boolean getValue(){
         return this.value;
     }
 
@@ -17,7 +17,7 @@ public class simpleInt {
         return this.name;
     }
 
-    public void changeValue(int value){
+    public void changeValue(boolean value){
         this.value = value;
     }
 
