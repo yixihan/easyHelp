@@ -1,10 +1,7 @@
 package com.yixihan.day1119;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @author Yixin Cao (November 1, 2022)
@@ -77,7 +74,7 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O( ). A function of d and n.
+     * Running time: O(log n). A function of d and n.
      */
     public void insert(Student s) {
         //待插入的节点
@@ -127,37 +124,41 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O( ). A function of d and n.
+     * Running time: O(n * log n). A function of d and n.
      */
     public int maxDepthDiff() {
         return maxDepthDiff (root, 0);
     }
 
+    /**
+     * O(n * log n)
+     */
     private int maxDepthDiff(Node node, int maxDiff) {
         if (node == null) {
             return maxDiff;
         }
-        maxDiff = Math.max(maxDiff, getDepthDiff (node));
+        maxDiff = Math.max (maxDiff, getDepthDiff (node));
         return Math.max (maxDepthDiff (node.lc, maxDiff), maxDepthDiff (node.rc, maxDiff));
     }
 
-    private int getDepthDiff (Node node) {
+    /**
+     * O(log n)
+     */
+    private int getDepthDiff(Node node) {
         if (node == null) {
             return 0;
         }
-        int leftHeight = getHeight (node.lc, 0);
-        int rightHeight = getHeight (node.rc, 0);
-        // TODO for test
-//        System.out.println (node.e.id + ", leftHeight = " + leftHeight + ", rightHeight = " + rightHeight);
-        return Math.abs (leftHeight - rightHeight);
+        int leftDepth = getDepth (node.lc, 0);
+        int rightDepth = getDepth (node.rc, 0);
+        return Math.abs (leftDepth - rightDepth);
     }
 
-    private int getHeight(Node node, int depth) {
+    private int getDepth(Node node, int depth) {
         if (node == null) {
             return depth;
         }
         depth += 1;
-        return Math.max (getHeight (node.lc, depth), getHeight (node.rc, depth));
+        return Math.max (getDepth (node.lc, depth), getDepth (node.rc, depth));
     }
 
     /**
@@ -177,7 +178,7 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O( ). A function of d and n.
+     * Running time: O(n * log n). A function of d and n.
      */
     public int maxSizeDiff() {
         return maxSizeDiff (root, 0);
@@ -187,18 +188,16 @@ public class Appilcation { // Please change!
         if (node == null) {
             return maxDiff;
         }
-        maxDiff = Math.max(maxDiff, getSizeDiff (node));
+        maxDiff = Math.max (maxDiff, getSizeDiff (node));
         return Math.max (maxSizeDiff (node.lc, maxDiff), maxSizeDiff (node.rc, maxDiff));
     }
 
-    private int getSizeDiff (Node node) {
+    private int getSizeDiff(Node node) {
         if (node == null) {
             return 0;
         }
         int leftSize = getSize (node.lc, 0);
         int rightSize = getSize (node.rc, 0);
-        // TODO for test
-//        System.out.println (node.e.id + ", leftSize = " + leftSize + ", rightSize = " + rightSize);
         return Math.abs (leftSize - rightSize);
     }
 
@@ -229,7 +228,7 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O( ). A function of d and n.
+     * Running time: O(log n). A function of d and n.
      */
     public int nodesWithOneChild() {
         if (root == null) {
@@ -271,7 +270,7 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O( ). A function of d and n.
+     * Running time: O(log n). A function of d and n.
      */
     public Student searchFullname(String name) {
         return searchFullname (root, name);
@@ -311,7 +310,7 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O( ). A function of d and n.
+     * Running time: O(log n). A function of d and n.
      */
     public Student[] searchSurname(String surname) {
         List<Student> list = new ArrayList<> ();
@@ -351,17 +350,40 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O( ). A function of d, n, and c.
+     * Running time: O(n + log n * log n). A function of d, n, and c.
      */
     public Student[] searchClass(String[] roster) {
+        Map<String, List<String>> map = new HashMap<> (roster.length);
         Student[] ans = new Student[roster.length];
-        for (int i = 0; i < roster.length; i++) {
-            ans[i] = searchFullname (roster[i]);
-            if (ans[i] == null) {
-                System.out.println ("not found student [" + roster[i] + "]!");
+        int index = 0;
+        for (String name : roster) {
+            String surname = name.split (" ")[0];
+            List<String> surnameList = map.getOrDefault (surname, new ArrayList<> ());
+            surnameList.add (name);
+            map.put (surname, surnameList);
+        }
+        for (Map.Entry<String, List<String>> entry : map.entrySet ()) {
+            String surname = entry.getKey ();
+            List<Student> studentList = Arrays.asList (searchSurname (surname));
+            for (String name : entry.getValue ()) {
+                Student student = findStudentInList (studentList, name);
+                if (student == null) {
+                    System.out.println ("student " + name + " not found!");
+                } else {
+                    ans[index++] = student;
+                }
             }
         }
         return ans;
+    }
+
+    private Student findStudentInList(List<Student> studentList, String name) {
+        for (Student student : studentList) {
+            if (student.name.equals (name)) {
+                return student;
+            }
+        }
+        return null;
     }
 
     /**
@@ -378,16 +400,13 @@ public class Appilcation { // Please change!
          * https://surnam.es/hong-kong.
          */
         String[] names = {"Chang Chi Fung", "Lee Cheuk Kwan", "Liu Tsz Ki", "Vallo David Jonathan Delos Reyes", "Jiang Han", "Park Taejoon", "Shin Hyuk", "Jung Junyoung", "Lam Wun Yiu", "Kwok Shan Shan", "Chui Cheuk Wai", "Lam Yik Chun", "Luo Yuehan", "Wang Hao", "Mansoor Haris", "Liang Wendi", "Meng Guanlin", "Wang Zhiyu", "Mak Ho Lun", "Liu Zixian", "Geng Qiyang", "Fong Chun Ming", "Cheung Chun Hei", "Lau Tsun Hang Ryan", "Cheung Cheuk Hang", "Liu Chi Hang", "Wong Yiu Nam", "Cheng Kok Yin", "Lam Wai Kit", "Liu Valerie", "Tam Chung Man", "Yan Tin Chun", "Lok Yin Chun", "Ng Ming Hei", "Lo Chun Hin", "Lam Pui Wa", "Lo Cho Hung", "Chu Tsz Fui", "Chow Ho Man", "Gao Ivan", "Ng Man Chau", "Iu Lam Ah", "Hung Wai Hin", "Tong Ka Yan", "Lo Ching Sau", "Lee Lee Ling", "Lam Ho Yin", "Sze Kin Ho", "Ng Siu Chi", "Wong Cheuk Laam", "Chan Yat Chun", "Lee Lap Shun", "Deng Chun Yung", "Fung Ki Ho", "Yeung Ting Kit", "Shiu Chi Yeung", "Kwan Yat Ming", "Chan Kin Kwan", "Leung Man Yi", "Yau Minki", "Hong Yuling", "Yung Wing Kiu", "Yuen Marco Siu Tung", "Lo Yung Sum", "Cheung Tsz Ho", "Chu Ka Hang", "Chan Man Yi", "Ng Yuet Kwan", "Lui Cheuk Lam Lily", "Tai Cheuk Hin", "Ong Chun Wa", "Yiu Pun Cham", "Cheng Ho Wing", "Wong Tsz Wai Desmond", "Lai Ho Sum", "Lee Siu Wai", "Lai Ming Hin", "Leung Hoi Ming", "To Ka Hei", "Tang Tsz Yeung", "Au Yeung Chun Yi", "Lau Ue Tin", "Yau Sin Yan", "Lam Ho Yan", "Tong Mei Chun", "Cheung Tsz Kwan", "Chiang Tin Hang", "Lai Kit Lun", "Cheung Sum Yin", "Wang Matthew Moyin", "Jiang Guanlin", "Edgar Christopher", "Liang Zhihong", "Bai Ruiyuan", "Chen Ru Bing", "Hu Wenqing", "Zhou Siyu", "Wang Yukai", "Lam Hei Yung", "Zhang Wanyu", "Wei Xianger", "Conte Chan Gabriel Alejandro", "Pratento Dylan Jefferson", "Lam Wan Yuet", "Chen Ziyang", "Jiang Zheng", "Xu Le", "He Boyan", "Liu Minghao", "Zhang Zhiyuan", "Chen Yuxuan", "Jin Cheng", "Liu Chenxi", "Qiu Siyi", "Han Wenyu", "Chan Cheuk Hei", "Ho Tsz Kan", "Du Haoxun", "Zheng Shouwen", "Ye Feng", "Yu Kaijing", "Lee Jer Tao", "Shen Ziqi", "Wang Yihe", "Liu Yanqi", "Zhang Wenxuan", "Huang Tianji", "Lu Zhoudao", "Zhang Tianyi", "Yuan Yunchen", "Liu Chengju", "Wei Siqi", "Liu Yuzhou", "Zhao Letao", "Huo Shuaining", "Li Kin Lung Anson", "Qin Qipeng", "Li Jiale", "He Rong", "Hiu Jason Kenneth", "Lam Ka Hang", "Li Tong", "Lau Choi Yu Elise", "Liu Dong", "Li Shuhang", "Zeng Yuejia", "Cai Zhenyu", "Lau Siu Hin", "Szeto Siu Chun", "Leung Cheuk Kit", "Cai Haoyu", "Ye Chenwei", "Huang Yidan", "Lee Kam Hung", "Wang Zhengyang", "Bao Yucheng", "Niyitegeka Berwa Aime Noel", "Lyateva Paulina Veselinova", "Zhang Boyu", "Chen Junru", "Fang Yuji", "Lin Qinfeng", "Tang Haichuan", "Hu Yuhang", "Zhou Taiqi", "Fang Anshu", "Wu Chao", "Zhang Haolin", "Ivanichev Mikhail", "Luo Yi", "Ieong Mei Leng", "Lee Wang Ho", "Jian Junxi", "Tam Tin", "Kjoelbro Niklas August", "Lee Hau Laam", "Pak Yi Ching", "Pang Kin Hei", "Xue Bingxin", "Lau Sin Yee", "Kwok Sze Ming", "Chan Lok Hin", "Chan Ho Yin Francis", "Chung Wai Ching", "Hu Hongjian", "Yiu Chi Chiu", "Tso Yuet Yan", "Chow Chun Wang", "Li Wun Wun", "Chen Junyu", "Kan Wai Yi", "Fong Chun Ho"};
-//                String[] names = {"Tse Kay", "Ho Denise", "Yung Joey", "Tang Gloria", "Chan Eason", "Lau Andy", "Cheung Jacky"};
+        //                String[] names = {"Tse Kay", "Ho Denise", "Yung Joey", "Tang Gloria", "Chan Eason", "Lau Andy", "Cheung Jacky"};
         SecureRandom random = new SecureRandom ();
         int id = 22222222;
         for (String name : names) {
             id += random.nextInt (100);
             tree.insert (new Student (String.valueOf (id), name));
         }
-
-        // for test
-//        NodeShow.show (tree.root);
 
         // Statistics
         System.out.println ("The largest depth difference of a node is: " + tree.maxDepthDiff ());
@@ -434,82 +453,4 @@ public class Appilcation { // Please change!
             return name1.split (" ")[0].compareTo (name2.split (" ")[0]);
         }
     }
-
-    // ***************** for testing **************** //
-    static class NodeShow {
-
-        // 用于获得树的层数
-        private static int getTreeDepth(Node root) {
-            return root == null ? 0 : (1 + Math.max(getTreeDepth(root.lc), getTreeDepth(root.rc)));
-        }
-
-        private static void writeArray(Node currNode, int rowIndex, int columnIndex, String[][] res, int treeDepth) {
-            // 保证输入的树不为空
-            if (currNode == null) return;
-            // 先将当前节点保存到二维数组中
-            res[rowIndex][columnIndex] = String.valueOf(currNode.e.id);
-
-            // 计算当前位于树的第几层
-            int currLevel = ((rowIndex + 1) / 2);
-            // 若到了最后一层，则返回
-            if (currLevel == treeDepth) return;
-            // 计算当前行到下一行，每个元素之间的间隔（下一行的列索引与当前元素的列索引之间的间隔）
-            int gap = treeDepth - currLevel - 1;
-
-            // 对左儿子进行判断，若有左儿子，则记录相应的"/"与左儿子的值
-            if (currNode.lc != null) {
-                res[rowIndex + 1][columnIndex - gap] = "/";
-                writeArray(currNode.lc, rowIndex + 2, columnIndex - gap * 2, res, treeDepth);
-            }
-
-            // 对右儿子进行判断，若有右儿子，则记录相应的"\"与右儿子的值
-            if (currNode.rc != null) {
-                res[rowIndex + 1][columnIndex + gap] = "\\";
-                writeArray(currNode.rc, rowIndex + 2, columnIndex + gap * 2, res, treeDepth);
-            }
-        }
-
-
-        public static void show(Node root) {
-            if (root == null){
-                System.out.println("EMPTY!");
-                return;
-            }
-            // 得到树的深度
-            int treeDepth = getTreeDepth(root);
-
-            // 最后一行的宽度为2的（n - 1）次方乘3，再加1
-            // 作为整个二维数组的宽度
-            int arrayHeight = treeDepth * 2 - 1;
-            int arrayWidth = (2 << (treeDepth - 2)) * 3 + 1;
-            // 用一个字符串数组来存储每个位置应显示的元素
-            String[][] res = new String[arrayHeight][arrayWidth];
-            // 对数组进行初始化，默认为一个空格
-            for (int i = 0; i < arrayHeight; i++) {
-                for (int j = 0; j < arrayWidth; j++) {
-                    res[i][j] = " ";
-                }
-            }
-
-            // 从根节点开始，递归处理整个树
-            // res[0][(arrayWidth + 1)/ 2] = (char)(root.val + '0');
-            writeArray(root, 0, arrayWidth / 2, res, treeDepth);
-
-            // 此时，已经将所有需要显示的元素储存到了二维数组中，将其拼接并打印即可
-            for (String[] line : res) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < line.length; i++) {
-                    sb.append(line[i]);
-                    if (line[i].length() > 1 && i <= line.length - 1) {
-                        i += line[i].length() > 4 ? 2 : line[i].length() - 1;
-                    }
-                }
-                System.out.println(sb.toString());
-            }
-        }
-    }
-
 }
-
-
-
