@@ -124,14 +124,14 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O(n * log n). A function of d and n.
+     * Running time: O(n * n). A function of d and n.
      */
     public int maxDepthDiff() {
         return maxDepthDiff (root, 0);
     }
 
     /**
-     * O(n * log n)
+     * O(log n * log n)
      */
     private int maxDepthDiff(Node node, int maxDiff) {
         if (node == null) {
@@ -178,7 +178,7 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O(n * log n). A function of d and n.
+     * Running time: O(n * n). A function of d and n.
      */
     public int maxSizeDiff() {
         return maxSizeDiff (root, 0);
@@ -228,7 +228,7 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O(log n). A function of d and n.
+     * Running time: O(n). A function of d and n.
      */
     public int nodesWithOneChild() {
         if (root == null) {
@@ -350,7 +350,7 @@ public class Appilcation { // Please change!
      * 3.
      * ...
      * <p>
-     * Running time: O(n + log n * log n). A function of d, n, and c.
+     * Running time: O(n * log n). A function of d, n, and c.
      */
     public Student[] searchClass(String[] roster) {
         Map<String, List<String>> map = new HashMap<> (roster.length);
