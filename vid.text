@@ -1,0 +1,20 @@
+{
+    "itntCode": "INCOME",
+    "msgDetails": {
+      "svcVersion": "1.0",
+      "msgUId": "5695ac07-5880-4996-839b-0dcb3fd9c936",
+      "rqDateTime": "2024-04-25T19:04:43.725+0800",
+      "rqClientId": "BIX",
+      "spId": null
+    },
+    "getCommissionRateReq": {
+      "appCode": "BIX",
+      "agentCode": "800006",
+      "lob": "GROUP",
+      "productCode": "LUV",
+      "coverageCode": "GTL_LUV_BASIC",
+      "schemeCode": null,
+      "renewalFlag": "N",
+      "submissionDate": "02/02/2024T19:53:05+08:00"
+    }
+  }
